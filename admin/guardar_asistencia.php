@@ -30,28 +30,45 @@ try {
 
     $id_estudiante = $est['id_estudiante'];
 
-    // 2️⃣ Verificar si ya marcó hoy
+    // 2️⃣ Buscar asistencia de HOY
     $stmt = $pdo->prepare(
-        "SELECT id_asistencia
+        "SELECT id_asistencia, hora_salida
          FROM asistencias
          WHERE id_estudiante = ?
-         AND fecha = CURDATE()"
+         AND fecha = CURDATE()
+         ORDER BY id_asistencia DESC
+         LIMIT 1"
     );
     $stmt->execute([$id_estudiante]);
+    $asistencia = $stmt->fetch();
 
-    if ($stmt->fetch()) {
-        echo "⚠️ Asistencia ya registrada hoy";
+    // 3️⃣ NO existe asistencia hoy → ENTRADA
+    if (!$asistencia) {
+        $stmt = $pdo->prepare(
+            "INSERT INTO asistencias (id_estudiante, fecha, hora, estado)
+             VALUES (?, CURDATE(), CURTIME(), 'presente')"
+        );
+        $stmt->execute([$id_estudiante]);
+
+        echo "🟢 Entrada registrada: {$est['nombres']} {$est['apellidos']}";
         exit;
     }
 
-    // 3️⃣ Registrar asistencia (fecha y hora separadas)
-    $stmt = $pdo->prepare(
-        "INSERT INTO asistencias (id_estudiante, fecha, hora, estado)
-         VALUES (?, CURDATE(), CURTIME(), 'presente')"
-    );
-    $stmt->execute([$id_estudiante]);
+    // 4️⃣ Existe entrada pero NO salida → SALIDA
+    if ($asistencia['hora_salida'] === null) {
+        $stmt = $pdo->prepare(
+            "UPDATE asistencias
+             SET hora_salida = CURTIME()
+             WHERE id_asistencia = ?"
+        );
+        $stmt->execute([$asistencia['id_asistencia']]);
 
-    echo "✅ Asistencia registrada: {$est['nombres']} {$est['apellidos']}";
+        echo "🔵 Salida registrada: {$est['nombres']} {$est['apellidos']}";
+        exit;
+    }
+
+    // 5️⃣ Entrada y salida ya registradas
+    echo "⚠️ Asistencia completa del día";
 
 } catch (PDOException $e) {
     echo "❌ Error BD: " . $e->getMessage();
