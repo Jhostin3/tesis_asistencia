@@ -22,23 +22,33 @@ $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <h2>Estudiantes registrados</h2>
 
 <a href="estudiantes_crear.php">+ Nuevo estudiante</a>
+<br><br>
 
 <table border="1" cellpadding="5">
 <tr>
     <th>Nombre</th>
     <th>Cédula</th>
     <th>NFC</th>
+    <th>Acción</th>
 </tr>
 
 <?php foreach ($estudiantes as $e): ?>
 <tr>
     <td><?= $e['nombres'].' '.$e['apellidos'] ?></td>
     <td><?= $e['cedula'] ?></td>
-    <td><?= $e['tarjeta_nfc'] ?? 'No asignada' ?></td>
+    <td><?= $e['tarjeta_nfc'] ? $e['tarjeta_nfc'] : 'No asignada' ?></td>
+    <td>
+        <a href="asignar_nfc.php?id=<?= $e['id_estudiante'] ?>">
+            Asignar NFC
+        </a>
+    </td>
 </tr>
 <?php endforeach; ?>
 
 </table>
+
+<br>
+<a href="../views/dashboard_admin.php">⬅ Volver al dashboard</a>
 
 </body>
 </html>
