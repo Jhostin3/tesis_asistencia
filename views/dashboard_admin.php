@@ -29,6 +29,7 @@ if (!isset($_SESSION['usuario'])) {
 <ul>
     <li><a href="usuarios/index.php">👥 Gestión de usuarios</a></li>
     <li><a href="../admin/estudiantes_listar.php">🎓 Gestión de estudiantes</a></li>
+    <li><a href="../admin/asistencia_nfc.php">📋 Registrar asistencia (NFC)</a></li>
 </ul>
 
 </body>
