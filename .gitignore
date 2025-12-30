@@ -1,0 +1,10 @@
+.DS_Store
+Thumbs.db
+*.log
+
+config/conexion.php
+/tmp/
+/cache/
+
+node_modules/
+.htaccess
