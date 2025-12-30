@@ -29,6 +29,7 @@ $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <th>Nombre</th>
     <th>Cédula</th>
     <th>NFC</th>
+    <th>Estado</th>
     <th>Acción</th>
 </tr>
 
@@ -37,10 +38,32 @@ $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <td><?= $e['nombres'].' '.$e['apellidos'] ?></td>
     <td><?= $e['cedula'] ?></td>
     <td><?= $e['tarjeta_nfc'] ? $e['tarjeta_nfc'] : 'No asignada' ?></td>
+    <td><?= $e['estado'] ?></td>
     <td>
-        <a href="asignar_nfc.php?id=<?= $e['id_estudiante'] ?>">
-            Asignar NFC
-        </a>
+
+        <?php if ($e['tarjeta_nfc']): ?>
+            <!-- Quitar NFC -->
+            <form method="POST" action="quitar_nfc.php" style="display:inline;">
+                <input type="hidden" name="id_estudiante" value="<?= $e['id_estudiante'] ?>">
+                <button type="submit">Quitar NFC</button>
+            </form>
+        <?php else: ?>
+            <!-- Asignar NFC -->
+            <a href="asignar_nfc.php?id=<?= $e['id_estudiante'] ?>">
+                Asignar NFC
+            </a>
+        <?php endif; ?>
+
+        <!-- Activar / Desactivar -->
+        <form method="POST" action="cambiar_estado_estudiante.php" style="display:inline;">
+            <input type="hidden" name="id_estudiante" value="<?= $e['id_estudiante'] ?>">
+            <input type="hidden" name="estado"
+                   value="<?= $e['estado'] === 'activo' ? 'inactivo' : 'activo' ?>">
+            <button type="submit">
+                <?= $e['estado'] === 'activo' ? 'Desactivar' : 'Activar' ?>
+            </button>
+        </form>
+
     </td>
 </tr>
 <?php endforeach; ?>
