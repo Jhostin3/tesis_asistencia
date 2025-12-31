@@ -7,7 +7,16 @@ if (!in_array($_SESSION['rol'], ['admin','secretario'])) {
     exit;
 }
 
-$stmt = $pdo->query("SELECT * FROM estudiantes ORDER BY apellidos");
+/*
+ Traemos estudiantes + usuario (si existe)
+ LEFT JOIN para que aparezcan aunque no tengan usuario
+*/
+$stmt = $pdo->query(
+    "SELECT e.*, u.usuario
+     FROM estudiantes e
+     LEFT JOIN usuarios u ON u.id_estudiante = e.id_estudiante
+     ORDER BY e.apellidos"
+);
 $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -21,34 +30,49 @@ $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <h2>Estudiantes registrados</h2>
 
-<a href="estudiantes_crear.php">+ Nuevo estudiante</a>
+<a href="estudiantes_crear.php">➕ Nuevo estudiante</a>
 <br><br>
 
 <table border="1" cellpadding="5">
 <tr>
     <th>Nombre</th>
+    <th>Curso</th>
     <th>Cédula</th>
     <th>NFC</th>
     <th>Estado</th>
+    <th>Usuario</th>
     <th>Acción</th>
 </tr>
 
 <?php foreach ($estudiantes as $e): ?>
 <tr>
     <td><?= $e['nombres'].' '.$e['apellidos'] ?></td>
+    <td><?= $e['curso'] ?></td>
     <td><?= $e['cedula'] ?></td>
-    <td><?= $e['tarjeta_nfc'] ? $e['tarjeta_nfc'] : 'No asignada' ?></td>
+    <td><?= $e['tarjeta_nfc'] ?: 'No asignada' ?></td>
     <td><?= $e['estado'] ?></td>
+
+    <!-- COLUMNA USUARIO -->
+    <td>
+        <?php if ($e['usuario']): ?>
+            <?= $e['usuario'] ?>
+        <?php else: ?>
+            <a href="usuarios/crear_estudiante.php?id=<?= $e['id_estudiante'] ?>">
+                ➕ Crear usuario
+            </a>
+        <?php endif; ?>
+    </td>
+
+    <!-- ACCIONES -->
     <td>
 
+        <!-- NFC -->
         <?php if ($e['tarjeta_nfc']): ?>
-            <!-- Quitar NFC -->
             <form method="POST" action="quitar_nfc.php" style="display:inline;">
                 <input type="hidden" name="id_estudiante" value="<?= $e['id_estudiante'] ?>">
                 <button type="submit">Quitar NFC</button>
             </form>
         <?php else: ?>
-            <!-- Asignar NFC -->
             <a href="asignar_nfc.php?id=<?= $e['id_estudiante'] ?>">
                 Asignar NFC
             </a>
