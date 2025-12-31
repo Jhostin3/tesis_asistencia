@@ -52,7 +52,7 @@ $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <td><?= $e['tarjeta_nfc'] ?: 'No asignada' ?></td>
     <td><?= $e['estado'] ?></td>
 
-    <!-- COLUMNA USUARIO -->
+    <!-- USUARIO -->
     <td>
         <?php if ($e['usuario']): ?>
             <?= $e['usuario'] ?>
@@ -95,7 +95,8 @@ $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </table>
 
 <br>
-<a href="../views/dashboard_admin.php">⬅ Volver al dashboard</a>
+<!-- 🔁 VOLVER CORRECTO SEGÚN ROL -->
+<a href="../views/index.php">⬅ Volver al dashboard</a>
 
 </body>
 </html>

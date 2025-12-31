@@ -47,8 +47,10 @@ fetch(raspberryURL)
     });
 </script>
 
-<br>
-<a href="../views/dashboard_admin.php">⬅ Volver</a>
+<br><br>
+
+<!-- 🔁 VOLVER CORRECTO SEGÚN ROL -->
+<a href="../views/index.php">⬅ Volver</a>
 
 </body>
 </html>
